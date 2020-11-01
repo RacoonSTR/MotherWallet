@@ -35,7 +35,7 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  Widget buildPaddingText(String text,
+  Widget _buildPaddingText(String text,
       {double padding = 5.0, double fontSize = 30}) {
     return Padding(
       padding: EdgeInsets.all(padding),
@@ -48,13 +48,25 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget buildCard({Widget child}) {
+  Widget _buildCard({Widget child}) {
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
       child: Material(
         type: MaterialType.card,
         borderRadius: BorderRadius.all(Radius.circular(5)),
         child: child,
+      ),
+    );
+  }
+
+  Widget _buildArrows({Icon icon, Function onPressed}) {
+    return SizedBox(
+      height: 20,
+      width: 20,
+      child: IconButton(
+        padding: new EdgeInsets.all(0.0),
+        onPressed: onPressed,
+        icon: icon,
       ),
     );
   }
@@ -69,32 +81,30 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            buildCard(
+            _buildCard(
               child: Container(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    IconButton(
-                      onPressed: () => _changeDate(-1),
+                    _buildArrows(
                       icon: Icon(Icons.keyboard_arrow_left),
+                      onPressed: () => _changeDate(-1),
                     ),
-                    buildPaddingText(
+                    _buildPaddingText(
                         DateFormat('EEEE, MMMM dd').format(
                           _date,
                         ),
                         fontSize: 24),
-                    IconButton(
+                    _buildArrows(
+                      icon: Icon(Icons.keyboard_arrow_right),
                       onPressed: _isCurrentDate() ? null : () => _changeDate(1),
-                      icon: Icon(
-                        Icons.keyboard_arrow_right,
-                      ),
                     ),
                   ],
                 ),
                 padding: EdgeInsets.all(20),
               ),
             ),
-            buildCard(
+            _buildCard(
               child: Container(
                 padding: EdgeInsets.all(20),
                 child: Row(
@@ -102,16 +112,16 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(children: [
-                      buildPaddingText('Your wallet'),
-                      buildPaddingText('9999', fontSize: 48),
+                      _buildPaddingText('Your wallet'),
+                      _buildPaddingText('9999', fontSize: 48),
                     ]),
                     Container(
                       child: Column(
                         children: [
-                          buildPaddingText('Today earned', fontSize: 18),
-                          buildPaddingText('150'),
-                          buildPaddingText('Today spended', fontSize: 18),
-                          buildPaddingText('100'),
+                          _buildPaddingText('Today earned', fontSize: 18),
+                          _buildPaddingText('150'),
+                          _buildPaddingText('Today spended', fontSize: 18),
+                          _buildPaddingText('100'),
                         ],
                       ),
                     )
@@ -119,7 +129,7 @@ class _MainPageState extends State<MainPage> {
                 ),
               ),
             ),
-            buildCard(
+            _buildCard(
               child: Container(
                 padding: EdgeInsets.all(20),
                 child: Align(
