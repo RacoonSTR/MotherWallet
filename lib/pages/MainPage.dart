@@ -9,6 +9,32 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  DateTime _date;
+
+  @override
+  void initState() {
+    super.initState();
+    this._date = DateTime.now();
+  }
+
+  bool _isCurrentDate() {
+    return DateTime.now().difference(_date).inDays == 0;
+  }
+
+  void _changeDate(int days) {
+    this.setState(() {
+      if (days > 0) {
+        this._date = this._date.add(
+              Duration(days: days),
+            );
+      } else {
+        this._date = this._date.subtract(
+              Duration(days: -1 * days),
+            );
+      }
+    });
+  }
+
   Widget buildPaddingText(String text,
       {double padding = 5.0, double fontSize = 30}) {
     return Padding(
@@ -45,12 +71,27 @@ class _MainPageState extends State<MainPage> {
           children: [
             buildCard(
               child: Container(
-                padding: EdgeInsets.all(20),
-                child: buildPaddingText(
-                  DateFormat('EEEE, MMMM dd').format(
-                    DateTime.now(),
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    IconButton(
+                      onPressed: () => _changeDate(-1),
+                      icon: Icon(Icons.keyboard_arrow_left),
+                    ),
+                    buildPaddingText(
+                        DateFormat('EEEE, MMMM dd').format(
+                          _date,
+                        ),
+                        fontSize: 24),
+                    IconButton(
+                      onPressed: _isCurrentDate() ? null : () => _changeDate(1),
+                      icon: Icon(
+                        Icons.keyboard_arrow_right,
+                      ),
+                    ),
+                  ],
                 ),
+                padding: EdgeInsets.all(20),
               ),
             ),
             buildCard(
