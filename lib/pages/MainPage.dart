@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:mother_wallet/components/AddSpendingDialog.dart';
+import 'package:mother_wallet/db/models/Pay.dart';
+import 'package:mother_wallet/db/providers/PayProvider.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -10,11 +12,31 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   DateTime _date;
+  int _wallet;
+  int _daylyPay;
 
   @override
   void initState() {
     super.initState();
     this._date = DateTime.now();
+    _loadWallet();
+    _loadDailyPaid();
+  }
+
+  _loadWallet() async {
+    DateTime firstDayOfMounth = DateTime(this._date.year, this._date.month);
+
+    int wallet = await PayProvider().getPayment(firstDayOfMounth, this._date);
+    this.setState(() {
+      this._wallet = wallet;
+    });
+  }
+
+  _loadDailyPaid() async {
+    Pay daylyPaid = await PayProvider().getPayByDate(this._date);
+    this.setState(() {
+      this._daylyPay = daylyPaid.value;
+    });
   }
 
   bool _isCurrentDate() {
@@ -113,15 +135,15 @@ class _MainPageState extends State<MainPage> {
                   children: [
                     Column(children: [
                       _buildPaddingText('Your wallet'),
-                      _buildPaddingText('9999', fontSize: 48),
+                      _buildPaddingText(this._wallet.toString(), fontSize: 48),
                     ]),
                     Container(
                       child: Column(
                         children: [
                           _buildPaddingText('Today earned', fontSize: 18),
-                          _buildPaddingText('150'),
+                          _buildPaddingText(_daylyPay.toString()),
                           _buildPaddingText('Today spended', fontSize: 18),
-                          _buildPaddingText('100'),
+                          _buildPaddingText('0'),
                         ],
                       ),
                     )
