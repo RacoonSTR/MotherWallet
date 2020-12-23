@@ -42,6 +42,8 @@ class _MainPageState extends State<MainPage> {
     DateTime firstDayOfMounth = DateTime(this._date.year, this._date.month);
 
     int wallet = await PayProvider().getPayment(firstDayOfMounth, this._date);
+    wallet -=
+        await SpendingProvider().getSpendingSum(firstDayOfMounth, this._date);
     this.setState(() {
       this._wallet = wallet;
     });
@@ -236,7 +238,8 @@ class _MainPageState extends State<MainPage> {
             context: context,
             builder: (BuildContext context) {
               return AddSpendingDialog((value, date) async {
-                await SpendingProvider().insert(new Spending(value: value, date: date));
+                await SpendingProvider()
+                    .insert(new Spending(value: value, date: date));
                 await _loadData();
               });
             },

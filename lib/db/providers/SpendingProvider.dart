@@ -33,4 +33,22 @@ class SpendingProvider {
         ? maps.map((spending) => Spending.fromMap(spending)).toList()
         : [];
   }
+
+  Future<List<Spending>> getSpendings(
+      DateTime startDate, DateTime endDate) async {
+    var maps = await new DatabaseConnection().query(_tableName,
+        where: '$_dateColumn > ? AND $_dateColumn < ?',
+        whereArgs: [startDate.toString(), endDate.toString()]);
+
+    return maps.isNotEmpty
+        ? maps.map((pay) => Spending.fromMap(pay)).toList()
+        : [];
+  }
+
+  Future<int> getSpendingSum(DateTime startDate, DateTime endDate) async {
+    List<Spending> pays = await this.getSpendings(startDate, endDate);
+    int sum =
+        pays.fold(0, (previousValue, element) => previousValue + element.value);
+    return sum;
+  }
 }
