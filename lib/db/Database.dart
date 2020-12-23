@@ -12,8 +12,9 @@ class DatabaseConnection {
       onCreate: (Database db, int version) async {
         // When creating the db, create the table
         await db.execute(
-            '''CREATE TABLE pay (id INTEGER PRIMARY KEY, value INTEGER, start_date DATETIME, end_date DATETIME);
-             CREATE TABLE spending (id INTEGER PRIMARY KEY, value INTEGER, comment STRING');''');
+            '''CREATE TABLE pay (id INTEGER PRIMARY KEY, value INTEGER, start_date DATETIME, end_date DATETIME);''');
+        await db.execute(
+            '''CREATE TABLE spending (id INTEGER PRIMARY KEY, value INTEGER, date DATETIME, comment STRING);''');
       },
     );
   }

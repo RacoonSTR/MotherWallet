@@ -3,7 +3,9 @@ import 'package:intl/intl.dart';
 
 import 'package:mother_wallet/components/AddSpendingDialog.dart';
 import 'package:mother_wallet/db/models/Pay.dart';
+import 'package:mother_wallet/db/models/Spending.dart';
 import 'package:mother_wallet/db/providers/PayProvider.dart';
+import 'package:mother_wallet/db/providers/SpendingProvider.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -15,6 +17,7 @@ class _MainPageState extends State<MainPage> {
   int _wallet;
   int _daylyPay;
   bool _isLoading;
+  List<Spending> _dailySpendings;
 
   @override
   void initState() {
@@ -29,6 +32,7 @@ class _MainPageState extends State<MainPage> {
     });
     await _loadWallet();
     await _loadDailyPaid();
+    await _loadDailySpending();
     this.setState(() {
       this._isLoading = false;
     });
@@ -44,12 +48,24 @@ class _MainPageState extends State<MainPage> {
   }
 
   _loadDailyPaid() async {
-    Pay daylyPaid = await PayProvider().getPayByDate(this._date);
+    Pay dailyPaid = await PayProvider().getPayByDate(this._date);
     this.setState(() {
-      if (daylyPaid != null) {
-        this._daylyPay = daylyPaid.value;
+      if (dailyPaid != null) {
+        this._daylyPay = dailyPaid.value;
       } else {
         this._daylyPay = null;
+      }
+    });
+  }
+
+  _loadDailySpending() async {
+    List<Spending> dailySpendings =
+        await SpendingProvider().getSpendingByDate(this._date);
+    this.setState(() {
+      if (dailySpendings != null) {
+        this._dailySpendings = dailySpendings;
+      } else {
+        this._dailySpendings = [];
       }
     });
   }
@@ -141,7 +157,12 @@ class _MainPageState extends State<MainPage> {
                       _buildPaddingText('Today earned', fontSize: 18),
                       _buildPaddingText(_daylyPay.toString()),
                       _buildPaddingText('Today spended', fontSize: 18),
-                      _buildPaddingText('0'),
+                      _buildPaddingText(_dailySpendings
+                          .fold(
+                              0,
+                              (previousValue, element) =>
+                                  previousValue + element.value)
+                          .toString()),
                     ],
                   ),
                 )
@@ -214,7 +235,10 @@ class _MainPageState extends State<MainPage> {
           await showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AddSpendingDalog();
+              return AddSpendingDialog((value, date) async {
+                await SpendingProvider().insert(new Spending(value: value, date: date));
+                await _loadData();
+              });
             },
           );
         },
