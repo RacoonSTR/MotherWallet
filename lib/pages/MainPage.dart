@@ -22,12 +22,12 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     super.initState();
-    this._date = DateTime.now();
     _loadData();
   }
 
   _loadData() async {
     this.setState(() {
+      this._date = DateTime.now();
       this._isLoading = true;
     });
     await _loadWallet();
