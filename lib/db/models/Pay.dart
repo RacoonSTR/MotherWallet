@@ -13,7 +13,12 @@ class Pay {
     return map;
   }
 
-  Pay({this.id, this.value, this.startDate, this.endDate});
+  Pay({
+    this.id,
+    this.value,
+    this.startDate,
+    this.endDate,
+  });
 
   Pay.fromMap(Map<String, dynamic> map) {
     id = map['id'];

@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 
-class AddSpendingDalog extends StatefulWidget {
+class AddSpendingDialog extends StatefulWidget {
+  Function onAdd;
+
+  AddSpendingDialog(this.onAdd);
+
   @override
-  _AddSpendingDalogState createState() => _AddSpendingDalogState();
+  _AddSpendingDialogState createState() => _AddSpendingDialogState();
 }
 
-class _AddSpendingDalogState extends State<AddSpendingDalog> {
+class _AddSpendingDialogState extends State<AddSpendingDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _valueController = TextEditingController();
+
   Widget build(BuildContext context) {
     return AlertDialog(
       title: const Text('Add Spending'),
       content: Form(
+        key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextFormField(
+              controller: _valueController,
               decoration: const InputDecoration(
                 hintText: 'How much did you spend',
                 labelText: 'Count *',
@@ -30,11 +39,12 @@ class _AddSpendingDalogState extends State<AddSpendingDalog> {
                 return null;
               },
             ),
-            InputDatePickerFormField(
+            /*InputDatePickerFormField(
+              
               initialDate: DateTime.now(),
               firstDate: DateTime.now(),
               lastDate: DateTime.now(),
-            )
+            )*/
           ],
         ),
       ),
@@ -47,7 +57,9 @@ class _AddSpendingDalogState extends State<AddSpendingDalog> {
           child: Text('Cancel'),
         ),
         FlatButton(
-          onPressed: () {
+          onPressed: () async {
+            await widget.onAdd(
+                int.parse(_valueController.text), DateTime.now());
             Navigator.of(context).pop();
           },
           textColor: Colors.blue,
